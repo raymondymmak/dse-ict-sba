@@ -12,6 +12,8 @@ classrooms = []
 bookings = [] 
 users = []
 currentUser = None
+
+# DATA MANAGEMENT HELPERS
 def load_data():
   global classrooms, bookings, users
 
@@ -91,6 +93,7 @@ def login():
     else:
       print("Invalid username or password. Please try again.")
 
+# MENUS
 def teacher_menu():
   while True:
     print("\n===== CWY Booking System =====")
@@ -172,7 +175,7 @@ def student_menu():
     
     input("\nPress Enter to continue...")
 
-# functions
+# FUNCTIONS
 def show_classrooms():
   print("\n--- Available Classrooms ---")
   for room in classrooms:
@@ -275,6 +278,30 @@ def book_classroom():
     else:
       print(f"\nError: {roomID} is already booked for {bookDate} during {bookTime} (overlap detected).")
 
+def cancel_booking():
+  if not bookings:
+    print("\nNo bookings to cancel.")
+    return
+
+  show_bookings()
+  try:
+    booking_index = int(input("Enter the number of the booking to cancel: ")) - 1
+    if 0 <= booking_index < len(bookings):
+      canceled_booking = bookings[booking_index]
+      # Only allow if admin or teacher is the booker
+      if currentUser['role'] == 'admin' or (currentUser['role'] == 'teacher' and canceled_booking['bookUsername'].lower() == currentUser['username'].lower()):
+        bookings.pop(booking_index)
+        save_data()
+        roomName = _get_classroom_by_id(canceled_booking['roomID'])['roomName']
+        print(f"\nBooking for {roomName} on {canceled_booking['bookDate']} {canceled_booking['bookTime']} by {canceled_booking['bookTeacher']} has been cancelled.")
+      else:
+        print("You do not have permission to cancel this booking.")
+    else:
+      print("Invalid booking number.")
+  except ValueError:
+    print("Invalid input. Please enter a number.")
+
+# HELPERS
 def _get_classroom_by_id(roomID):
   for room in classrooms:
     if room['roomID'] == roomID:
@@ -353,34 +380,7 @@ def _is_time_overlap(start1_str, end1_str, start2_str, end2_str):
     print("Error: Invalid time format encountered during overlap check. Problem on our side.")
     return False
 
-def cancel_booking():
-  if not bookings:
-    print("\nNo bookings to cancel.")
-    return
-
-  show_bookings()
-  try:
-    booking_index = int(input("Enter the number of the booking to cancel: ")) - 1
-    if 0 <= booking_index < len(bookings):
-      canceled_booking = bookings[booking_index]
-      # Only allow if admin or teacher is the booker
-      if currentUser['role'] == 'admin' or (currentUser['role'] == 'teacher' and canceled_booking['bookUsername'].lower() == currentUser['username'].lower()):
-        bookings.pop(booking_index)
-        save_data()
-        roomName = _get_classroom_by_id(canceled_booking['roomID'])['roomName']
-        print(f"\nBooking for {roomName} on {canceled_booking['bookDate']} {canceled_booking['bookTime']} by {canceled_booking['bookTeacher']} has been cancelled.")
-      else:
-        print("You do not have permission to cancel this booking.")
-    else:
-      print("Invalid booking number.")
-  except ValueError:
-    print("Invalid input. Please enter a number.")
-
-
-
-
-
-
+# ENTRY
 if __name__ == "__main__":
   load_data()
   login()
