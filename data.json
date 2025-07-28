@@ -3,59 +3,111 @@
     {
       "roomID": "C01",
       "roomName": "Classroom 1A",
-      "roomCapacity": 35
+      "roomCapacity": 35,
+      "hasProjector": true,
+      "hasWhiteboard": false,
+      "hasComputers": false
     },
     {
       "roomID": "C02",
       "roomName": "Classroom 1B",
-      "roomCapacity": 35
+      "roomCapacity": 35,
+      "hasProjector": true,
+      "hasWhiteboard": false,
+      "hasComputers": false
     },
     {
       "roomID": "C03",
       "roomName": "Classroom 1C",
-      "roomCapacity": 35
+      "roomCapacity": 35,
+      "hasProjector": true,
+      "hasWhiteboard": false,
+      "hasComputers": false
     },
     {
       "roomID": "C11",
       "roomName": "Classroom 2A",
-      "roomCapacity": 35
+      "roomCapacity": 35,
+      "hasProjector": false,
+      "hasWhiteboard": true,
+      "hasComputers": false
     },
     {
       "roomID": "C12",
       "roomName": "Classroom 2B",
-      "roomCapacity": 35
+      "roomCapacity": 35,
+      "hasProjector": false,
+      "hasWhiteboard": true,
+      "hasComputers": false
     },
     {
       "roomID": "C13",
       "roomName": "Classroom 2C",
-      "roomCapacity": 35
+      "roomCapacity": 35,
+      "hasProjector": false,
+      "hasWhiteboard": true,
+      "hasComputers": false
     },
     {
       "roomID": "D01",
       "roomName": "Hall",
-      "roomCapacity": 1200
+      "roomCapacity": 1200,
+      "hasProjector": true,
+      "hasWhiteboard": false,
+      "hasComputers": false
     },
     {
       "roomID": "D02",
       "roomName": "Covered Playground",
-      "roomCapacity": 100
+      "roomCapacity": 100,
+      "hasProjector": false,
+      "hasWhiteboard": false,
+      "hasComputers": false
     },
     {
-      "roomID": "D03",
+      "roomID": "E01",
       "roomName": "InnoHub",
-      "roomCapacity": 40
+      "roomCapacity": 40,
+      "hasProjector": true,
+      "hasWhiteboard": true,
+      "hasComputers": true
+    },
+    {
+      "roomID": "E02",
+      "roomName": "Chem Lab",
+      "roomCapacity": 25,
+      "hasProjector": false,
+      "hasWhiteboard": true,
+      "hasComputers": true
+    },
+    {
+      "roomID": "E03",
+      "roomName": "Bio Lab",
+      "roomCapacity": 25,
+      "hasProjector": false,
+      "hasWhiteboard": true,
+      "hasComputers": false
+    },
+    {
+      "roomID": "E04",
+      "roomName": "Phy Lab",
+      "roomCapacity": 25,
+      "hasProjector": false,
+      "hasWhiteboard": true,
+      "hasComputers": false
     }
   ],
   "bookings": [
     {
-      "roomID": "D01",
-      "bookDate": "2025-12-12",
-      "bookTime": "09:00-12:00",
+      "roomID": "D02",
+      "roomName": "Covered Playground",
+      "bookDate": "2025-10-15",
+      "bookTime": "10:00-20:00",
       "bookUsername": "t_tyy",
       "bookTeacher": "Ms Tse",
-      "bookSubject": "Chinese",
-      "bookClass": "5F",
-      "bookRemarks": ""
+      "bookSubject": "Singing Performance",
+      "bookClass": "5E",
+      "bookRemarks": "\u597d\u597d\u807d"
     }
   ],
   "users": [

@@ -181,8 +181,11 @@ def student_menu():
 # FUNCTIONS
 def show_classrooms():
   print("\n--- Available Classrooms ---")
+  print(f"{'ID':<10}{'Name':<25}{'Capacity':<10}{'Projector':<12}{'Whiteboard':<12}{'Computers':<12}")
+  print("-" * 80)
   for room in classrooms:
-    print(f"  ID: {room['roomID']}, Name: {room['roomName']}, Capacity: {room['roomCapacity']}")
+    print(f"{room['roomID']:<10}{room['roomName']:<25}{room['roomCapacity']:<10}"
+          f"{str(room['hasProjector']):<12}{str(room['hasWhiteboard']):<12}{str(room['hasComputers']):<12}")
   print("----------------------------")
 
 def show_bookings():
@@ -303,6 +306,9 @@ def cancel_booking():
       print("Invalid booking number.")
   except ValueError:
     print("Invalid input. Please enter a number.")
+
+def edit_classrooms():
+  print("not implemented yet")
 
 # HELPERS
 def _get_classroom_by_id(roomID):
