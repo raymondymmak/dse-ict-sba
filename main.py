@@ -29,15 +29,18 @@ def load_data():
     # Initialize some default stuff if no file exists
     print(f"No data file found ({DATA_FILE}). Starting with empty data.")
     classrooms.extend([
-      {"roomID": "C01", "roomName": "Classroom 1A", "roomCapacity": 35},
-      {"roomID": "C02", "roomName": "Classroom 1B", "roomCapacity": 35},
-      {"roomID": "C03", "roomName": "Classroom 1C", "roomCapacity": 35},
-      {"roomID": "C11", "roomName": "Classroom 2A", "roomCapacity": 35},
-      {"roomID": "C12", "roomName": "Classroom 2B", "roomCapacity": 35},
-      {"roomID": "C13", "roomName": "Classroom 2C", "roomCapacity": 35},
-      {"roomID": "D01", "roomName": "Hall", "roomCapacity": 1200},
-      {"roomID": "D02", "roomName": "Covered Playground", "roomCapacity": 100},
-      {"roomID": "D03", "roomName": "InnoHub", "roomCapacity": 40},
+      {"roomID": "C01", "roomName": "Classroom 1A", "roomCapacity": 35, "hasProjector": True, "hasWhiteboard": False, "hasComputers": False},
+      {"roomID": "C02", "roomName": "Classroom 1B", "roomCapacity": 35, "hasProjector": True, "hasWhiteboard": False, "hasComputers": False},
+      {"roomID": "C03", "roomName": "Classroom 1C", "roomCapacity": 35, "hasProjector": True, "hasWhiteboard": False, "hasComputers": False},
+      {"roomID": "C11", "roomName": "Classroom 2A", "roomCapacity": 35, "hasProjector": False, "hasWhiteboard": True, "hasComputers": False},
+      {"roomID": "C12", "roomName": "Classroom 2B", "roomCapacity": 35, "hasProjector": False, "hasWhiteboard": True, "hasComputers": False},
+      {"roomID": "C13", "roomName": "Classroom 2C", "roomCapacity": 35, "hasProjector": False, "hasWhiteboard": True, "hasComputers": False},
+      {"roomID": "D01", "roomName": "Hall", "roomCapacity": 1200, "hasProjector": True, "hasWhiteboard": False, "hasComputers": False},
+      {"roomID": "D02", "roomName": "Covered Playground", "roomCapacity": 100, "hasProjector": False, "hasWhiteboard": False, "hasComputers": False},
+      {"roomID": "E01", "roomName": "InnoHub", "roomCapacity": 40, "hasProjector": True, "hasWhiteboard": True, "hasComputers": True},
+      {"roomID": "E02", "roomName": "Chem Lab", "roomCapacity": 25, "hasProjector": False, "hasWhiteboard": True, "hasComputers": True},
+      {"roomID": "E03", "roomName": "Bio Lab", "roomCapacity": 25, "hasProjector": False, "hasWhiteboard": True, "hasComputers": False},
+      {"roomID": "E04", "roomName": "Phy Lab", "roomCapacity": 25, "hasProjector": False, "hasWhiteboard": True, "hasComputers": False},
     ])
     bookings.extend([
       {
