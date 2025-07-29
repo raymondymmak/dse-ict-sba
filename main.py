@@ -296,7 +296,9 @@ def show_classrooms():
     for room in classrooms:
         print(
             f"{room['roomID']:<10}{room['roomName']:<25}{room['roomCapacity']:<10}"
-            f"{str(room['hasProjector']):<12}{str(room['hasWhiteboard']):<12}{str(room['hasComputers']):<12}"
+            f"{'✔' if room['hasProjector'] else '':<12}"
+            f"{'✔' if room['hasWhiteboard'] else '':<12}"
+            f"{'✔' if room['hasComputers'] else '':<12}"
         )
     print("----------------------------")
 
