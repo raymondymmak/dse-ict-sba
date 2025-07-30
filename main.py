@@ -304,7 +304,6 @@ def book_classrooms():
         print(f"Error: Classroom with ID '{roomID}' not found.")
         return
 
-    print("You are booking for multiple dates (bulk booking).")
     if not filtered:
         date_str = input(
             "Enter dates separated by commas (YYYY-MM-DD,YYYY-MM-DD,...): "
@@ -375,10 +374,6 @@ def cancel_booking():
             print("Invalid booking number.")
     except ValueError:
         print("Invalid input. Please enter a number.")
-
-
-def edit_classrooms():
-    print("not implemented yet")
 
 
 # HELPERS
