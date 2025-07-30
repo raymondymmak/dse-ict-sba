@@ -1,3 +1,6 @@
+# CWY Booking System (Raymond Mak, 2025)
+# Created with Python 3.13, VS Code and Black formatter
+
 import json
 import datetime
 import os
@@ -9,7 +12,7 @@ DATE_FORMAT = "%Y-%m-%d"
 TIME_FORMAT = "%H:%M"
 TIME_SLOT_PATTERN = re.compile(
     r"^(\d{2}:\d{2})-(\d{2}:\d{2})$"
-)  # thank you https://stackoverflow.com/questions/69806492/regex-d4-d2-d2
+)  # regex, reference https://stackoverflow.com/questions/69806492/regex-d4-d2-d2
 classrooms = []
 bookings = []
 
@@ -23,9 +26,10 @@ def load_data():
             data = json.load(f)
             classrooms = data.get("classrooms", [])
             bookings = data.get("bookings", [])
+            # .get can handle missing keys without need of try/except, reference https://stackoverflow.com/questions/55229600/python-dictionaries-difference-between-dict-getkey-and-dict-getkey
         print(f"Data loaded from {DATA_FILE}")
     else:
-        print(f"No data file found ({DATA_FILE}). Starting with empty data.")
+        print(f"No data file found ({DATA_FILE}). Creating data file.")
         classrooms.extend(
             [
                 {
@@ -136,11 +140,11 @@ def load_data():
                     "bookTeacher": "Ms Tse",
                     "bookSubject": "Singing Performance",
                     "bookClass": "5E",
-                    "bookRemarks": "好好聽",
+                    "bookRemarks": "Performance from @_vickysmusic",
                 },
             ]
         )
-        print("Default classrooms added. You can edit the list via the menu.")
+        print("Default classrooms added.")
         save_data()
 
 
@@ -151,10 +155,10 @@ def save_data():
     }
     with open(DATA_FILE, "w") as f:
         json.dump(data, f, indent=2)
-    print(f"Data saved to {DATA_FILE}")
+    print(f"Valid bookings saved to {DATA_FILE}")
 
 
-# MAIN MENU (no user system)
+# MAIN MENU (no user system for first program)
 def main_menu():
     while True:
         print("\n+==============================+")
@@ -162,7 +166,7 @@ def main_menu():
         print("+==============================+")
         print("| 1. Show Classrooms           |")
         print("| 2. Show Bookings             |")
-        print("| 3. Book Classroom            |")
+        print("| 3. Book Classroom(s)         |")
         print("| 4. Cancel Booking            |")
         print("| 5. Exit                      |")
         print("+==============================+")
@@ -174,7 +178,7 @@ def main_menu():
         elif choice == "2":
             show_bookings()
         elif choice == "3":
-            book_classroom()
+            book_classrooms()
         elif choice == "4":
             cancel_booking()
         elif choice == "5":
@@ -191,7 +195,7 @@ def show_classrooms():
     print("\n--- Available Classrooms ---")
     print(
         f"{'ID':<10}{'Name':<25}{'Capacity':<10}{'Projector':<12}{'Whiteboard':<12}{'Computers':<12}"
-    )
+    )  # using :< to align columns, reference https://www.w3schools.com/python/python_string_formatting.asp
     print("-" * 80)
     for room in classrooms:
         print(
@@ -210,7 +214,7 @@ def show_bookings():
 
     i = 0
 
-    print("\n----- Current Bookings -----")
+    print("\n--- Current Bookings ---")
     for booking in bookings:
         i += 1
         print(
@@ -220,13 +224,11 @@ def show_bookings():
         print(
             f"     Booked by: {booking['bookTeacher']} for {booking['bookSubject']} (with class {booking['bookClass']})"
         )
-        print(
-            f"     Remarks: {booking.get('bookRemarks', 'N/A')}"
-        )  # .get can handle missing keys
-    print("----------------------------")
+        print(f"     Remarks: {booking.get('bookRemarks', 'N/A')}")
+    print("-" * 50)
 
 
-def book_classroom():
+def book_classrooms():
     show_classrooms()
     roomID = (
         input(
@@ -284,7 +286,7 @@ def book_classroom():
                 print(
                     f"{room['roomID']:<10}{room['roomName']:<25}{room['roomCapacity']:<10}"
                 )
-            print("-------------------------------------")
+            print("-" * 50)
             roomID = (
                 input("Enter Classroom ID to book from the filtered list: ")
                 .strip()
@@ -321,9 +323,9 @@ def book_classroom():
                 return
         bookTime = _get_valid_time_slot_input()
 
-    bookTeacher = input("Enter Teacher's Name: ").strip()
-    bookSubject = input("Enter Subject Name: ").strip()
-    bookClass = input("Enter Class Name (eg 5E): ").strip()
+    bookTeacher = input("Enter Teacher's Name:     ").strip()
+    bookSubject = input("Enter Subject Name:       ").strip()
+    bookClass = input("Enter Class:              ").strip()
     bookRemarks = input("Enter Remarks (optional): ").strip()
     if not bookRemarks:
         bookRemarks = ""
@@ -381,23 +383,25 @@ def edit_classrooms():
 
 # HELPERS
 def _get_classroom_by_id(roomID):
+    # using linear search as number of classrooms is small
     for room in classrooms:
         if room["roomID"] == roomID:
             return room
     return None
 
 
-def _get_valid_date_input(prompt="Enter date (YYYY-MM-DD): "):
-    while True:
-        date_str = input(prompt).strip()
-        try:
-            bookingDate = datetime.datetime.strptime(date_str, DATE_FORMAT).date()
-            if bookingDate < datetime.date.today():
-                print("Error: Cannot book for a past date.")
-                continue
-            return date_str
-        except ValueError:
-            print("Invalid date format. Please use YYYY-MM-DD.")
+# unused, but kept for reference
+# def _get_valid_date_input(prompt="Enter date (YYYY-MM-DD): "):
+#     while True:
+#         date_str = input(prompt).strip()
+#         try:
+#             bookingDate = datetime.datetime.strptime(date_str, DATE_FORMAT).date()
+#             if bookingDate < datetime.date.today():
+#                 print("Error: Cannot book for a past date.")
+#                 continue
+#             return date_str
+#         except ValueError:
+#             print("Invalid date format. Please use YYYY-MM-DD.")
 
 
 def _get_valid_time_slot_input():
@@ -406,7 +410,7 @@ def _get_valid_time_slot_input():
             "Enter time slot (HH:MM-HH:MM, e.g., 09:00-13:00): "
         ).strip()
 
-        match = TIME_SLOT_PATTERN.match(time_slot_str)  # i learned regex for this smh
+        match = TIME_SLOT_PATTERN.match(time_slot_str)
         if not match:
             print(
                 "Invalid time slot format. Please use HH:MM-HH:MM (e.g., 08:00-09:00)."
@@ -424,10 +428,8 @@ def _get_valid_time_slot_input():
             print("Invalid time format within the slot (from 00:00 to 23:59).")
             continue
 
-        # check if the time slot is within standard school hours
-        if start_time < datetime.time(7, 0) or end_time > datetime.time(
-            17, 0
-        ):  # 07:00 to 17:00
+        # check if the time slot is within standard school hours, currently hardcoded as 0700-1700
+        if start_time < datetime.time(7, 0) or end_time > datetime.time(17, 0):
             confirm = (
                 input(
                     f"Warning: This time slot is outside standard school hours. Continue? (y/n): "
@@ -446,16 +448,16 @@ def _is_classroom_available(roomID, bookDate, bookTime):
     reqStart, reqEnd = match.groups()
 
     for booking in bookings:
-        # Check if it's the same classroom and date
+        # check if same classroom and date, if so check for time overlap
         if booking["roomID"] == roomID and booking["bookDate"] == bookDate:
 
-            # Extract start and end times from the existing booking's bookTime
+            # extract booking's start and end times
             existingMatch = TIME_SLOT_PATTERN.match(booking["bookTime"])
             existingStart, existingEnd = existingMatch.groups()
 
             # Check for overlap with the existing booking
             if _is_time_overlap(reqStart, reqEnd, existingStart, existingEnd):
-                return False  # Not available (overlap found)
+                return False  # Not available, overlap found
 
     return True  # Available
 
@@ -469,10 +471,10 @@ def _is_time_overlap(start1_str, end1_str, start2_str, end2_str):
 
         return (
             start1 < end2 and start2 < end1
-        )  # covers all overlap, includes touching at endpoints
+        )  # covers all overlap, including touching at endpoints
 
     except ValueError:
-        # just in case
+        # probably won't occur, error checking just in case
         print(
             "Error: Invalid time format encountered during overlap check. Problem on our side."
         )

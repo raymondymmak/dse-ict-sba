@@ -116,15 +116,6 @@
       "bookSubject": "many man",
       "bookClass": "1",
       "bookRemarks": ""
-    },
-    {
-      "roomID": "E01",
-      "bookDate": "2025-10-10",
-      "bookTime": "09:00-10:00",
-      "bookTeacher": "john",
-      "bookSubject": "cs",
-      "bookClass": "5e",
-      "bookRemarks": ""
     }
   ]
 }
