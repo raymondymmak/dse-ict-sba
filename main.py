@@ -364,6 +364,16 @@ def cancel_booking():
     try:
         booking_index = int(input("Enter the number of the booking to cancel: ")) - 1
         if 0 <= booking_index < len(bookings):
+            canceled_booking = bookings[booking_index]
+            class_name = canceled_booking.get("bookClass", "this class")
+            confirm = (
+                input(f"Warning: You are deleting {class_name}. Continue? (y/n): ")
+                .strip()
+                .lower()
+            )
+            if confirm != "y" and confirm != "yes":
+                print("Cancellation aborted.")
+                return
             canceled_booking = bookings.pop(booking_index)
             save_data()
             roomName = _get_classroom_by_id(canceled_booking["roomID"])["roomName"]
@@ -433,6 +443,7 @@ def _get_valid_time_slot_input():
                 .lower()
             )
             if confirm != "yes" and confirm != "y":
+                print("Booking aborted.")
                 continue
 
         return time_slot_str
