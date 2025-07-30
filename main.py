@@ -12,24 +12,19 @@ TIME_SLOT_PATTERN = re.compile(
 )  # thank you https://stackoverflow.com/questions/69806492/regex-d4-d2-d2
 classrooms = []
 bookings = []
-users = []
-currentUser = None
 
 
 # DATA MANAGEMENT HELPERS
 def load_data():
-    global classrooms, bookings, users
+    global classrooms, bookings
 
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, "r") as f:
             data = json.load(f)
             classrooms = data.get("classrooms", [])
             bookings = data.get("bookings", [])
-            users = data.get("users", [])
         print(f"Data loaded from {DATA_FILE}")
-
     else:
-        # Initialize some default stuff if no file exists
         print(f"No data file found ({DATA_FILE}). Starting with empty data.")
         classrooms.extend(
             [
@@ -138,7 +133,6 @@ def load_data():
                     "roomName": "Covered Playground",
                     "bookDate": "2025-10-15",
                     "bookTime": "10:00-20:00",
-                    "bookUsername": "t_tyy",
                     "bookTeacher": "Ms Tse",
                     "bookSubject": "Singing Performance",
                     "bookClass": "5E",
@@ -146,66 +140,25 @@ def load_data():
                 },
             ]
         )
-        users.extend(
-            [
-                {"username": "admin", "password": "admin123", "role": "admin"},
-                {"username": "t_wkw", "password": "teacher123", "role": "teacher"},
-                {"username": "t_tyy", "password": "teacher123", "role": "teacher"},
-                {"username": "s20200073", "password": "student123", "role": "student"},
-            ]
-        )
-        print("Default classrooms added. You can edit the list via the admin menu.")
-        save_data()  # Save initial data
+        print("Default classrooms added. You can edit the list via the menu.")
+        save_data()
 
 
 def save_data():
     data = {
         "classrooms": classrooms,
         "bookings": bookings,
-        "users": users,
     }
     with open(DATA_FILE, "w") as f:
         json.dump(data, f, indent=2)
     print(f"Data saved to {DATA_FILE}")
 
 
-# MAIN
-def login():
-    print("Welcome to the CWY Booking System!")
-    while True:
-        username = input("Enter your username: ").strip()
-        password = input("Enter your password: ").strip()
-
-        global currentUser
-        currentUser = next(
-            (
-                u
-                for u in users
-                if u["username"] == username and u["password"] == password
-            ),
-            None,
-        )
-
-        if currentUser:
-            print(
-                f"Login successful! Welcome, {currentUser['username']} ({currentUser['role']})"
-            )
-            if currentUser["role"] == "admin":
-                admin_menu()
-            elif currentUser["role"] == "teacher":
-                teacher_menu()
-            elif currentUser["role"] == "student":
-                student_menu()
-            break
-        else:
-            print("Invalid username or password. Please try again.")
-
-
-# MENUS
-def teacher_menu():
+# MAIN MENU (no user system)
+def main_menu():
     while True:
         print("\n+==============================+")
-        print("|      CWY Teacher Menu        |")
+        print("|      CWY Booking Menu        |")
         print("+==============================+")
         print("| 1. Show Classrooms           |")
         print("| 2. Show Bookings             |")
@@ -226,65 +179,6 @@ def teacher_menu():
             cancel_booking()
         elif choice == "5":
             print("Exiting CWY Booking System. Goodbye!")
-            break
-        else:
-            print("Invalid choice. Please try again.")
-
-        input("\nPress Enter to continue...")
-
-
-def admin_menu():
-    while True:
-        print("\n+==============================+")
-        print("|        CWY Admin Menu        |")
-        print("+==============================+")
-        print("| 1. Show Classrooms           |")
-        print("| 2. Show Bookings             |")
-        print("| 3. Book Classroom            |")
-        print("| 4. Cancel Booking            |")
-        print("| 5. Edit Classrooms           |")
-        print("| 6. Exit                      |")
-        print("+==============================+")
-
-        choice = input("Enter your choice: ").strip()
-
-        if choice == "1":
-            show_classrooms()
-        elif choice == "2":
-            show_bookings()
-        elif choice == "3":
-            book_classroom()
-        elif choice == "4":
-            cancel_booking()
-        elif choice == "5":
-            edit_classrooms()
-        elif choice == "6":
-            print("Exiting CWY Admin Menu. Goodbye!")
-            break
-        else:
-            print("Invalid choice. Please try again.")
-
-        input("\nPress Enter to continue...")
-
-
-def student_menu():
-    while True:
-        print("\n+==============================+")
-        print("|       CWY Student Menu       |")
-        print("+==============================+")
-        print("| 1. Show Classrooms           |")
-        print("| 2. Show Bookings             |")
-        print("| 3. Exit                      |")
-        print("+==============================+")
-
-        choice = input("Enter your choice: ").strip()
-
-        if choice == "1":
-            show_classrooms()
-        elif choice == "2":
-            show_bookings()
-        elif choice == "3":
-            print("Exiting CWY Student Menu. Goodbye!")
             break
         else:
             print("Invalid choice. Please try again.")
@@ -344,7 +238,6 @@ def book_classroom():
 
     # Filtering logic
     filtered = False
-    # If filtering, get bulk dates and time, and use for all logic
     if roomID.startswith("FILTER"):
         filter_type = roomID.split()
         if len(filter_type) == 2 and filter_type[1] in [
@@ -374,7 +267,6 @@ def book_classroom():
                     print(f"Invalid date format: {d}. Please use YYYY-MM-DD.")
                     return
             bookTime = _get_valid_time_slot_input()
-            # Only show rooms available for ALL dates
             available_rooms = [room for room in classrooms if room.get(filter_key)]
             available_rooms = [
                 room
@@ -428,7 +320,6 @@ def book_classroom():
                 print(f"Invalid date format: {d}. Please use YYYY-MM-DD.")
                 return
         bookTime = _get_valid_time_slot_input()
-    # else: bookDates, bookTime already set
 
     bookTeacher = input("Enter Teacher's Name: ").strip()
     bookSubject = input("Enter Subject Name: ").strip()
@@ -448,7 +339,6 @@ def book_classroom():
                 "roomID": roomID,
                 "bookDate": bookDate,
                 "bookTime": bookTime,
-                "bookUsername": currentUser["username"],
                 "bookTeacher": bookTeacher,
                 "bookSubject": bookSubject,
                 "bookClass": bookClass,
@@ -473,21 +363,12 @@ def cancel_booking():
     try:
         booking_index = int(input("Enter the number of the booking to cancel: ")) - 1
         if 0 <= booking_index < len(bookings):
-            canceled_booking = bookings[booking_index]
-            # Only allow if admin or teacher is the booker
-            if currentUser["role"] == "admin" or (
-                currentUser["role"] == "teacher"
-                and canceled_booking["bookUsername"].lower()
-                == currentUser["username"].lower()
-            ):
-                bookings.pop(booking_index)
-                save_data()
-                roomName = _get_classroom_by_id(canceled_booking["roomID"])["roomName"]
-                print(
-                    f"\nBooking for {roomName} on {canceled_booking['bookDate']} {canceled_booking['bookTime']} by {canceled_booking['bookTeacher']} has been cancelled."
-                )
-            else:
-                print("You do not have permission to cancel this booking.")
+            canceled_booking = bookings.pop(booking_index)
+            save_data()
+            roomName = _get_classroom_by_id(canceled_booking["roomID"])["roomName"]
+            print(
+                f"\nBooking for {roomName} on {canceled_booking['bookDate']} {canceled_booking['bookTime']} by {canceled_booking['bookTeacher']} has been cancelled."
+            )
         else:
             print("Invalid booking number.")
     except ValueError:
@@ -601,4 +482,4 @@ def _is_time_overlap(start1_str, end1_str, start2_str, end2_str):
 # ENTRY
 if __name__ == "__main__":
     load_data()
-    login()
+    main_menu()

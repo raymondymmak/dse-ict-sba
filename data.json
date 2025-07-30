@@ -103,7 +103,6 @@
       "roomName": "Covered Playground",
       "bookDate": "2025-10-15",
       "bookTime": "10:00-20:00",
-      "bookUsername": "t_tyy",
       "bookTeacher": "Ms Tse",
       "bookSubject": "Singing Performance",
       "bookClass": "5E",
@@ -113,33 +112,19 @@
       "roomID": "E01",
       "bookDate": "2025-12-15",
       "bookTime": "09:00-13:00",
-      "bookUsername": "admin",
       "bookTeacher": "john",
       "bookSubject": "many man",
       "bookClass": "1",
       "bookRemarks": ""
-    }
-  ],
-  "users": [
-    {
-      "username": "admin",
-      "password": "admin123",
-      "role": "admin"
     },
     {
-      "username": "t_wkw",
-      "password": "teacher123",
-      "role": "teacher"
-    },
-    {
-      "username": "t_tyy",
-      "password": "teacher123",
-      "role": "teacher"
-    },
-    {
-      "username": "s20200073",
-      "password": "student123",
-      "role": "student"
+      "roomID": "E01",
+      "bookDate": "2025-10-10",
+      "bookTime": "09:00-10:00",
+      "bookTeacher": "john",
+      "bookSubject": "cs",
+      "bookClass": "5e",
+      "bookRemarks": ""
     }
   ]
 }
