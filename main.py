@@ -204,13 +204,15 @@ def login():
 # MENUS
 def teacher_menu():
     while True:
-        print("\n===== CWY Booking System =====")
-        print("  1. Show Classrooms")
-        print("  2. Show Bookings")
-        print("  3. Book Classroom")
-        print("  4. Cancel Booking")
-        print("  5. Exit")
-        print("==============================")
+        print("\n+==============================+")
+        print("|      CWY Teacher Menu        |")
+        print("+==============================+")
+        print("| 1. Show Classrooms           |")
+        print("| 2. Show Bookings             |")
+        print("| 3. Book Classroom            |")
+        print("| 4. Cancel Booking            |")
+        print("| 5. Exit                      |")
+        print("+==============================+")
 
         choice = input("Enter your choice: ").strip()
 
@@ -233,14 +235,16 @@ def teacher_menu():
 
 def admin_menu():
     while True:
-        print("\n===== CWY Admin Menu =====")
-        print("  1. Show Classrooms")
-        print("  2. Show Bookings")
-        print("  3. Book Classroom")
-        print("  4. Cancel Booking")
-        print("  5. Edit Classrooms")
-        print("  6. Exit")
-        print("==============================")
+        print("\n+==============================+")
+        print("|        CWY Admin Menu        |")
+        print("+==============================+")
+        print("| 1. Show Classrooms           |")
+        print("| 2. Show Bookings             |")
+        print("| 3. Book Classroom            |")
+        print("| 4. Cancel Booking            |")
+        print("| 5. Edit Classrooms           |")
+        print("| 6. Exit                      |")
+        print("+==============================+")
 
         choice = input("Enter your choice: ").strip()
 
@@ -265,11 +269,13 @@ def admin_menu():
 
 def student_menu():
     while True:
-        print("\n===== CWY Student Menu =====")
-        print("  1. Show Classrooms")
-        print("  2. Show Bookings")
-        print("  3. Exit")
-        print("==============================")
+        print("\n+==============================+")
+        print("|       CWY Student Menu       |")
+        print("+==============================+")
+        print("| 1. Show Classrooms           |")
+        print("| 2. Show Bookings             |")
+        print("| 3. Exit                      |")
+        print("+==============================+")
 
         choice = input("Enter your choice: ").strip()
 
