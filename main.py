@@ -219,24 +219,7 @@ def teacher_menu():
         elif choice == "2":
             show_bookings()
         elif choice == "3":
-            # Ask user for single or recurring booking
-            while True:
-                print("\nBook Classroom:")
-                print("  1. Single Date Booking")
-                print("  2. Recurring Weekly Booking")
-                print("  3. Cancel")
-                sub_choice = input("Enter your choice: ").strip()
-                if sub_choice == "1":
-                    book_classroom_single()
-                    break
-                elif sub_choice == "2":
-                    book_classroom_recurring()
-                    break
-                elif sub_choice == "3":
-                    print("Cancelled booking.")
-                    break
-                else:
-                    print("Invalid choice. Please try again.")
+            book_classroom()
         elif choice == "4":
             cancel_booking()
         elif choice == "5":
@@ -266,24 +249,7 @@ def admin_menu():
         elif choice == "2":
             show_bookings()
         elif choice == "3":
-            # Ask user for single or recurring booking
-            while True:
-                print("\nBook Classroom:")
-                print("  1. Single Date Booking")
-                print("  2. Recurring Weekly Booking")
-                print("  3. Cancel")
-                sub_choice = input("Enter your choice: ").strip()
-                if sub_choice == "1":
-                    book_classroom_single()
-                    break
-                elif sub_choice == "2":
-                    book_classroom_recurring()
-                    break
-                elif sub_choice == "3":
-                    print("Cancelled booking.")
-                    break
-                else:
-                    print("Invalid choice. Please try again.")
+            book_classroom()
         elif choice == "4":
             cancel_booking()
         elif choice == "5":
@@ -334,7 +300,7 @@ def show_classrooms():
             f"{'✔' if room['hasWhiteboard'] else '':<12}"
             f"{'✔' if room['hasComputers'] else '':<12}"
         )
-    print("----------------------------")
+    print("-" * 80)
 
 
 def show_bookings():
@@ -360,7 +326,7 @@ def show_bookings():
     print("----------------------------")
 
 
-def book_classroom_single():
+def book_classroom():
     show_classrooms()
     roomID = (
         input(
@@ -372,6 +338,7 @@ def book_classroom_single():
 
     # Filtering logic
     filtered = False
+    # If filtering, get bulk dates and time, and use for all logic
     if roomID.startswith("FILTER"):
         filter_type = roomID.split()
         if len(filter_type) == 2 and filter_type[1] in [
@@ -385,116 +352,22 @@ def book_classroom_single():
                 "COMPUTERS": "hasComputers",
             }[filter_type[1]]
             print(f"Filtering for classrooms with {filter_key[3:].capitalize()}...")
-            bookDate = _get_valid_date_input()
-            bookTime = _get_valid_time_slot_input()
-            available_rooms = [room for room in classrooms if room.get(filter_key)]
-            available_rooms = [
-                room
-                for room in available_rooms
-                if _is_classroom_available(
-                    room["roomID"],
-                    bookDate,
-                    bookTime,
-                )
-            ]
-            if not available_rooms:
-                print("No available classrooms match your filter, date, and timeslot.")
-                return
-            print("\n--- Filtered Available Classrooms ---")
-            for room in available_rooms:
-                print(
-                    f"{room['roomID']:<10}{room['roomName']:<25}{room['roomCapacity']:<10}"
-                )
-            print("-------------------------------------")
-            roomID = (
-                input("Enter Classroom ID to book from the filtered list: ")
-                .strip()
-                .upper()
-            )
-            filtered = True
-        else:
-            print(
-                "Invalid filter. Try 'filter projector', 'filter whiteboard', or 'filter computers'."
-            )
-            return
-
-    room = _get_classroom_by_id(roomID)
-    if not room:
-        print(f"Error: Classroom with ID '{roomID}' not found.")
-        return
-
-    print("You are booking a single date.")
-    if not filtered:
-        bookDate = _get_valid_date_input()
-        bookTime = _get_valid_time_slot_input()
-    # else: bookDate and bookTime already set
-    bookTeacher = input("Enter Teacher's Name: ").strip()
-    bookSubject = input("Enter Subject Name: ").strip()
-    bookClass = input("Enter Class Name (eg 5E): ").strip()
-    bookRemarks = input("Enter Remarks (optional): ").strip()
-    if not bookRemarks:
-        bookRemarks = ""
-
-    if not bookTeacher or not bookSubject or not bookClass:
-        print("Teacher name, subject, and class name cannot be empty.")
-        return
-
-    if _is_classroom_available(roomID, bookDate, bookTime):
-        new_booking = {
-            "roomID": roomID,
-            "bookDate": bookDate,
-            "bookTime": bookTime,
-            "bookUsername": currentUser["username"],
-            "bookTeacher": bookTeacher,
-            "bookSubject": bookSubject,
-            "bookClass": bookClass,
-            "bookRemarks": bookRemarks,
-        }
-        bookings.append(new_booking)
-        save_data()
-        print(f"\nSuccessfully booked {roomID} for {bookDate} at {bookTime}.")
-    else:
-        print(
-            f"\nError: {roomID} is already booked for {bookDate} during {bookTime} (overlap detected)."
-        )
-
-
-def book_classroom_recurring():
-    show_classrooms()
-    roomID = (
-        input(
-            "Enter Classroom ID to book, or type 'filter projector', 'filter whiteboard', or 'filter computers': "
-        )
-        .strip()
-        .upper()
-    )
-
-    # Filtering logic
-    filtered = False
-    # If filtering, get start/end date and time, and use for all logic
-    if roomID.startswith("FILTER"):
-        filter_type = roomID.split()
-        if len(filter_type) == 2 and filter_type[1] in [
-            "PROJECTOR",
-            "WHITEBOARD",
-            "COMPUTERS",
-        ]:
-            filter_key = {
-                "PROJECTOR": "hasProjector",
-                "WHITEBOARD": "hasWhiteboard",
-                "COMPUTERS": "hasComputers",
-            }[filter_type[1]]
-            print(f"Filtering for classrooms with {filter_key[3:].capitalize()}...")
-            startDate = _get_valid_date_input("Enter start date (YYYY-MM-DD): ")
-            endDate = _get_valid_date_input("Enter end date (YYYY-MM-DD): ")
-            bookTime = _get_valid_time_slot_input()
-            # Generate all dates for recurring
+            date_str = input(
+                "Enter dates separated by commas (YYYY-MM-DD,YYYY-MM-DD,...): "
+            ).strip()
+            date_list = [d.strip() for d in date_str.split(",") if d.strip()]
             bookDates = []
-            current_date = datetime.datetime.strptime(startDate, DATE_FORMAT).date()
-            end_date = datetime.datetime.strptime(endDate, DATE_FORMAT).date()
-            while current_date <= end_date:
-                bookDates.append(current_date.strftime(DATE_FORMAT))
-                current_date += datetime.timedelta(days=7)
+            for d in date_list:
+                try:
+                    bookingDate = datetime.datetime.strptime(d, DATE_FORMAT).date()
+                    if bookingDate < datetime.date.today():
+                        print(f"Error: {d} is in the past.")
+                        return
+                    bookDates.append(d)
+                except ValueError:
+                    print(f"Invalid date format: {d}. Please use YYYY-MM-DD.")
+                    return
+            bookTime = _get_valid_time_slot_input()
             # Only show rooms available for ALL dates
             available_rooms = [room for room in classrooms if room.get(filter_key)]
             available_rooms = [
@@ -531,23 +404,25 @@ def book_classroom_recurring():
         print(f"Error: Classroom with ID '{roomID}' not found.")
         return
 
-    print("You are booking a recurring date once a week.")
+    print("You are booking for multiple dates (bulk booking).")
     if not filtered:
-        startDate = _get_valid_date_input("Enter start date (YYYY-MM-DD): ")
-        endDate = _get_valid_date_input("Enter end date (YYYY-MM-DD): ")
-        bookTime = _get_valid_time_slot_input()
+        date_str = input(
+            "Enter dates separated by commas (YYYY-MM-DD,YYYY-MM-DD,...): "
+        ).strip()
+        date_list = [d.strip() for d in date_str.split(",") if d.strip()]
         bookDates = []
-        current_date = datetime.datetime.strptime(startDate, DATE_FORMAT).date()
-        end_date = datetime.datetime.strptime(endDate, DATE_FORMAT).date()
-        while current_date <= end_date:
-            bookDates.append(current_date.strftime(DATE_FORMAT))
-            current_date += datetime.timedelta(days=7)
+        for d in date_list:
+            try:
+                bookingDate = datetime.datetime.strptime(d, DATE_FORMAT).date()
+                if bookingDate < datetime.date.today():
+                    print(f"Error: {d} is in the past.")
+                    return
+                bookDates.append(d)
+            except ValueError:
+                print(f"Invalid date format: {d}. Please use YYYY-MM-DD.")
+                return
+        bookTime = _get_valid_time_slot_input()
     # else: bookDates, bookTime already set
-    if startDate > endDate:
-        print("Error: Start date cannot be after end date.")
-        return
-    weekday = datetime.datetime.strptime(startDate, DATE_FORMAT).strftime("%A")
-    print(f"Recurring booking dates: ({weekday}) {', '.join(bookDates)}")
 
     bookTeacher = input("Enter Teacher's Name: ").strip()
     bookSubject = input("Enter Subject Name: ").strip()
@@ -581,150 +456,6 @@ def book_classroom_recurring():
             )
             continue
     save_data()
-
-
-def book_classroom():
-    while True:
-        show_classrooms()
-        roomID = (
-            input(
-                "Enter Classroom ID to book, or type 'filter projector', 'filter whiteboard', or 'filter computers': "
-            )
-            .strip()
-            .upper()
-        )
-
-        # Filtering logic
-        if roomID.startswith("FILTER"):
-            filter_type = roomID.split()
-            if len(filter_type) == 2 and filter_type[1] in [
-                "PROJECTOR",
-                "WHITEBOARD",
-                "COMPUTERS",
-            ]:
-                filter_key = {
-                    "PROJECTOR": "hasProjector",
-                    "WHITEBOARD": "hasWhiteboard",
-                    "COMPUTERS": "hasComputers",
-                }[filter_type[1]]
-                print(f"Filtering for classrooms with {filter_key[3:].capitalize()}...")
-                bookTime = _get_valid_time_slot_input()
-                available_rooms = [room for room in classrooms if room.get(filter_key)]
-                available_rooms = [
-                    room
-                    for room in available_rooms
-                    if _is_classroom_available(
-                        room["roomID"],
-                        datetime.date.today().strftime(DATE_FORMAT),
-                        bookTime,
-                    )
-                ]
-                if not available_rooms:
-                    print("No available classrooms match your filter and timeslot.")
-                    continue
-                print("\n--- Filtered Available Classrooms ---")
-                for room in available_rooms:
-                    print(
-                        f"{room['roomID']:<10}{room['roomName']:<25}{room['roomCapacity']:<10}"
-                    )
-                print("-------------------------------------")
-                roomID = (
-                    input("Enter Classroom ID to book from the filtered list: ")
-                    .strip()
-                    .upper()
-                )
-            else:
-                print(
-                    "Invalid filter. Try 'filter projector', 'filter whiteboard', or 'filter computers'."
-                )
-                continue
-
-        room = _get_classroom_by_id(roomID)
-        if not room:
-            print(f"Error: Classroom with ID '{roomID}' not found.")
-            continue
-
-        isRecurring = input(
-            "Book a recurring date once a week? (y/n): "
-        ).strip().lower() in ["yes", "y"]
-
-        if isRecurring:
-            print("You are booking a recurring date once a week.")
-            startDate = _get_valid_date_input("Enter start date (YYYY-MM-DD): ")
-            endDate = _get_valid_date_input("Enter end date (YYYY-MM-DD): ")
-            if startDate > endDate:
-                print("Error: Start date cannot be after end date.")
-                return
-            bookDates = []
-            current_date = datetime.datetime.strptime(startDate, DATE_FORMAT).date()
-            end_date = datetime.datetime.strptime(endDate, DATE_FORMAT).date()
-            while current_date <= end_date:
-                bookDates.append(current_date.strftime(DATE_FORMAT))
-                current_date += datetime.timedelta(days=7)
-            weekday = datetime.datetime.strptime(startDate, DATE_FORMAT).strftime("%A")
-            print(f"Recurring booking dates: ({weekday}) {', '.join(bookDates)}")
-        else:
-            print("You are booking a single date.")
-            bookDate = _get_valid_date_input()
-
-        bookTime = _get_valid_time_slot_input()
-        bookTeacher = input("Enter Teacher's Name: ").strip()
-        bookSubject = input("Enter Subject Name: ").strip()
-        bookClass = input("Enter Class Name (eg 5E): ").strip()
-        bookRemarks = input("Enter Remarks (optional): ").strip()
-        if not bookRemarks:
-            bookRemarks = ""
-
-        if not bookTeacher or not bookSubject or not bookClass:
-            print("Teacher name, subject, and class name cannot be empty.")
-            return
-
-        if isRecurring:
-            print("\n")
-            for bookDate in bookDates:
-                if _is_classroom_available(roomID, bookDate, bookTime):
-                    new_booking = {
-                        "roomID": roomID,
-                        "bookDate": bookDate,
-                        "bookTime": bookTime,
-                        "bookUsername": currentUser[
-                            "username"
-                        ],  # Store the username of the person booking
-                        "bookTeacher": bookTeacher,
-                        "bookSubject": bookSubject,
-                        "bookClass": bookClass,  # Add class name to booking
-                        "bookRemarks": bookRemarks,
-                    }
-                    bookings.append(new_booking)
-                    print(f"Successfully booked {roomID} for {bookDate} at {bookTime}.")
-                else:
-                    print(
-                        f"Error: {roomID} is already booked for {bookDate} during {bookTime} (overlap detected)."
-                    )
-                    continue
-            save_data()
-        else:
-            if _is_classroom_available(roomID, bookDate, bookTime):
-                new_booking = {
-                    "roomID": roomID,
-                    "bookDate": bookDate,
-                    "bookTime": bookTime,
-                    "bookUsername": currentUser[
-                        "username"
-                    ],  # Store the username of the person booking
-                    "bookTeacher": bookTeacher,
-                    "bookSubject": bookSubject,
-                    "bookClass": bookClass,  # Add class name to booking
-                    "bookRemarks": bookRemarks,
-                }
-                bookings.append(new_booking)
-                save_data()
-                print(f"\nSuccessfully booked {roomID} for {bookDate} at {bookTime}.")
-            else:
-                print(
-                    f"\nError: {roomID} is already booked for {bookDate} during {bookTime} (overlap detected)."
-                )
-        break
 
 
 def cancel_booking():
