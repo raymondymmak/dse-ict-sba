@@ -252,7 +252,7 @@ def book_classrooms():
                 "WHITEBOARD": "hasWhiteboard",
                 "COMPUTERS": "hasComputers",
             }[filter_type[1]]
-            print(f"Filtering for classrooms with {filter_key[3:].capitalize()}...")
+            print(f"Filtering for classrooms with {filter_key[3:].lower()}...")
             date_str = input(
                 "Enter dates separated by commas (YYYY-MM-DD,YYYY-MM-DD,...): "
             ).strip()
