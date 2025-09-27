@@ -215,7 +215,12 @@ def show_bookings():
     i = 0
 
     print("\n--- Current Bookings ---")
-    for booking in bookings:
+    # Sort bookings by bookDate and then by bookTime
+    sorted_bookings = sorted(
+        bookings,
+        key=lambda b: (b["bookDate"], b["bookTime"])
+    )
+    for booking in sorted_bookings:
         i += 1
         print(
             f"  {i}. {_get_classroom_by_id(booking['roomID'])['roomName']} - {booking['roomID']}"
